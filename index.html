@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>_Chinese_Player_ | 个人主页</title>
+    <!-- 引入外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 引入本地样式文件 -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#86EFAC', // 主色调：浅绿色
+                        secondary: '#C4B5FD', // 次要色调：浅紫色
+                        accent: '#93C5FD', // 强调色：浅蓝色
+                        dark: '#1E293B', // 深色
+                        light: '#F8FAFC', // 浅色
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        }
+    </style>
+    
+    <style>
+        /* 全局动画和过渡效果 */
+        body {
+            background-color: #F8FAFC;
+            background-image: 
+                radial-gradient(at 40% 20%, rgba(134, 239, 172, 0.15) 0px, transparent 50%), /* 浅绿色 */
+                radial-gradient(at 80% 0%, rgba(196, 181, 253, 0.15) 0px, transparent 50%), /* 浅紫色 */
+                radial-gradient(at 0% 50%, rgba(147, 197, 253, 0.15) 0px, transparent 50%), /* 浅蓝色 */
+                radial-gradient(at 80% 50%, rgba(134, 239, 172, 0.15) 0px, transparent 50%), /* 浅绿色 */
+                radial-gradient(at 0% 100%, rgba(196, 181, 253, 0.15) 0px, transparent 50%), /* 浅紫色 */
+                radial-gradient(at 80% 100%, rgba(147, 197, 253, 0.15) 0px, transparent 50%); /* 浅蓝色 */
+            background-attachment: fixed;
+        }
+        
+        /* 页面加载动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        /* 按钮波纹效果 */
+        .btn-ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%, -50%);
+            transform-origin: 50% 50%;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(100, 100);
+                opacity: 0;
+            }
+        }
+        
+        .btn-ripple:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+    </style>
+</head>
+<body class="font-sans text-dark min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/70 border-b border-gray-200 shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-primary flex items-center gap-2">
+                <i class="fa fa-user-circle"></i>
+                <span>_Chinese_Player_</span>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <div class="hidden md:flex items-center gap-6">
+                <a href="#about" class="text-gray-700 hover:text-primary transition-colors duration-300">关于我</a>
+                <a href="#links" class="text-gray-700 hover:text-primary transition-colors duration-300">社交媒体</a>
+                <a href="#games" class="text-gray-700 hover:text-primary transition-colors duration-300">网页小游戏</a>
+                <a href="#projects" class="text-gray-700 hover:text-primary transition-colors duration-300">项目</a>
+            </div>
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="menuBtn" class="md:hidden text-gray-700 focus:outline-none">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobileMenu" class="md:hidden hidden bg-white border-t border-gray-200">
+            <div class="container mx-auto px-4 py-2 flex flex-col gap-3">
+                <a href="#about" class="text-gray-700 hover:text-primary py-2 transition-colors duration-300">关于我</a>
+                <a href="#links" class="text-gray-700 hover:text-primary py-2 transition-colors duration-300">社交媒体</a>
+                <a href="#games" class="text-gray-700 hover:text-primary py-2 transition-colors duration-300">网页小游戏</a>
+                <a href="#projects" class="text-gray-700 hover:text-primary py-2 transition-colors duration-300">项目</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="container mx-auto px-4 pt-24 pb-16">
+        <!-- 英雄区域 -->
+        <section class="flex flex-col items-center text-center mb-16 fade-in">
+            <div class="w-40 h-40 rounded-full bg-gradient-to-br from-primary to-secondary p-1 mb-6">
+                <div class="w-full h-full rounded-full bg-white overflow-hidden flex items-center justify-center">
+                    <img src="photos/OIP-C.png" alt="头像" class="w-full h-full object-cover">
+                </div>
+            </div>
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-dark mb-4 text-shadow">
+                _Chinese_Player_
+            </h1>
+            <p class="text-gray-600 text-lg max-w-2xl mb-8">
+                欢迎访问我的个人主页，这里展示了我的项目和社交媒体链接。
+            </p>
+        </section>
+
+        <!-- 关于我部分 -->
+        <section id="about" class="mb-16 fade-in" style="animation-delay: 0.2s">
+            <div class="bg-white rounded-2xl shadow-md p-8 border border-gray-100">
+                <h2 class="text-2xl font-bold mb-6 text-primary flex items-center gap-2">
+                    <i class="fa fa-info-circle"></i>
+                    关于我
+                </h2>
+                <div class="prose max-w-none">
+                    <!-- 个人简介留空，用户可以自己填写 -->
+                    <p class="text-gray-600 min-h-[100px] border border-dashed border-gray-300 rounded-lg p-4 bg-gray-50">
+                        一个爱玩Minecraft的小初生awa
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 社交媒体链接 -->
+        <section id="links" class="mb-16 fade-in" style="animation-delay: 0.4s">
+            <h2 class="text-2xl font-bold mb-6 text-primary flex items-center gap-2">
+                <i class="fa fa-link"></i>
+                社交媒体
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Modrinth -->
+                <a href="https://modrinth.com/user/_Chinese_Player_" target="_blank" rel="noopener noreferrer" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100 card-hover">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                            <img src="photos/image.png" alt="Modrinth" class="w-8 h-8">
+                        </div>
+                        <h3 class="text-xl font-semibold">Modrinth</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">访问我的Modrinth主页，查看我分享的模组和项目。</p>
+                    <button class="btn-primary btn-ripple">
+                        <span>访问主页</span>
+                        <i class="fa fa-external-link"></i>
+                    </button>
+                </a>
+                
+                <!-- GitHub -->
+                <a href="https://github.com/Shabby-666" target="_blank" rel="noopener noreferrer" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100 card-hover">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                            <i class="fa fa-github text-2xl text-black-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold">GitHub</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">浏览我的代码仓库，查看我的开源项目和贡献。</p>
+                    <button class="btn-primary btn-ripple">
+                        <span>访问主页</span>
+                        <i class="fa fa-external-link"></i>
+                    </button>
+                </a>
+                
+                <!-- 抖音 -->
+                <a href="https://www.douyin.com/user/MS4wLjABAAAAjCWAtTrWY46QN-X9SJajw8G5jPOsSXlKsoMwInp8jKQ" target="_blank" rel="noopener noreferrer" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100 card-hover">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                            <img src="photos/exported-image.png" alt="抖音" class="w-8 h-8">
+                        </div>
+                        <h3 class="text-xl font-semibold">抖音</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">关注我的抖音账号，查看我的短视频内容。</p>
+                    <button class="btn-primary btn-ripple">
+                        <span>访问主页</span>
+                        <i class="fa fa-external-link"></i>
+                    </button>
+                </a>
+            </div>
+        </section>
+
+        <!-- 网页小游戏 -->
+        <section id="games" class="mb-16 fade-in" style="animation-delay: 0.5s">
+            <h2 class="text-2xl font-bold mb-6 text-primary flex items-center gap-2">
+                <i class="fa fa-gamepad"></i>
+                我的网页小游戏
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 扫雷游戏 -->
+                <a href="https://Shabby-666.github.io/saolei" target="_blank" rel="noopener noreferrer" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100 card-hover">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-accent flex items-center justify-center">
+                            <i class="fa fa-bomb text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold">扫雷游戏</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">经典的扫雷游戏，测试你的逻辑推理能力和运气！</p>
+                    <button class="btn-primary btn-ripple">
+                        <span>开始游戏</span>
+                        <i class="fa fa-play"></i>
+                    </button>
+                </a>
+            </div>
+        </section>
+
+        <!-- 项目展示 -->
+        <section id="projects" class="fade-in" style="animation-delay: 0.6s">
+            <h2 class="text-2xl font-bold mb-6 text-primary flex items-center gap-2">
+                <i class="fa fa-code"></i>
+                我的项目
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- DisableCommand -->
+                <a href="https://github.com/Shabby-666/DisableCommand" target="_blank" rel="noopener noreferrer" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100 card-hover">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-accent flex items-center justify-center">
+                            <img src="photos/project2.png" alt="DisableCommand" class="w-8 h-8">
+                        </div>
+                        <h3 class="text-xl font-semibold">DisableCommand</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">禁用Minecraft服务器命令，轻量，简单</p>
+                    <button class="btn-primary btn-ripple">
+                        <span>查看项目</span>
+                        <i class="fa fa-external-link"></i>
+                    </button>
+                </a>
+                
+                <!-- NekoX -->
+                <a href="https://github.com/Shabby-666/NekoX" target="_blank" rel="noopener noreferrer" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100 card-hover">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
+                            <img src="photos/project3.png" alt="NekoX" class="w-8 h-8">
+                        </div>
+                        <h3 class="text-xl font-semibold">NekoX</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">服务器猫娘插件，NekoC和ToNeko的究极缝合怪版本</p>
+                    <button class="btn-primary btn-ripple">
+                        <span>查看项目</span>
+                        <i class="fa fa-external-link"></i>
+                    </button>
+                </a>
+                
+                <!-- Anti-Politically-Related-Content -->
+                <a href="https://github.com/Shabby-666/APRC" target="_blank" rel="noopener noreferrer" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100 card-hover">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
+                            <img src="photos/project1.png" alt="Anti-Politically-Related-Content" class="w-8 h-8">
+                        </div>
+                        <h3 class="text-xl font-semibold">Anti-Politically-Related-Content</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">Ai聊天反涉政，让你的服务器聊天环境更上一层楼（由于太重量级被作者暂时放弃）</p>
+                    <button class="btn-primary btn-ripple">
+                        <span>查看项目</span>
+                        <i class="fa fa-external-link"></i>
+                    </button>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-400">&copy; 2025 _Chinese_Player_. 保留所有权利。</p>
+                </div>
+                <div class="flex gap-4">
+                    <a href="https://modrinth.com/user/_Chinese_Player_" target="_blank" rel="noopener noreferrer" class="text-green-400 hover:text-white transition-colors duration-300">
+                        <img src="photos/image.png" alt="Modrinth" class="w-6 h-6">
+                    </a>
+                    <a href="https://github.com/Shabby-666" target="_blank" rel="noopener noreferrer" class="text-purple-400 hover:text-white transition-colors duration-300">
+                        <i class="fa fa-github text-xl"></i>
+                    </a>
+                    <a href="https://www.douyin.com/user/MS4wLjABAAAAjCWAtTrWY46QN-X9SJajw8G5jPOsSXlKsoMwInp8jKQ" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-white transition-colors duration-300">
+                        <img src="photos/exported-image.png" alt="抖音" class="w-6 h-6">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            // 切换图标
+            const icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // 关闭移动端菜单
+                    mobileMenu.classList.add('hidden');
+                    const icon = menuBtn.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                    
+                    // 滚动到目标位置
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, // 减去导航栏高度
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // 页面滚动时的导航栏效果
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 10) {
+                nav.classList.add('py-2', 'shadow-md');
+                nav.classList.remove('py-3', 'shadow-sm');
+            } else {
+                nav.classList.add('py-3', 'shadow-sm');
+                nav.classList.remove('py-2', 'shadow-md');
+            }
+        });
+        
+        // 检测元素是否在视口中，并添加动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        // 初始设置和观察所有带有fade-in类的元素
+        document.querySelectorAll('.fade-in').forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(element);
+        });
+    </script>
+    
+    <!-- 引入本地脚本文件 -->
+    <script src="script.js"></script>
+</body>
+</html>
