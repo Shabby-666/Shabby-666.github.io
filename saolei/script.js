@@ -12,6 +12,10 @@ let seconds = 0;
 let previousMinePositions = null; // 保存上一局的地雷位置
 let previousGameBoard = null; // 保存上一局的游戏状态
 let previousGameSettings = null; // 保存上一局的游戏设置（行数、列数、地雷数）
+let isMobile = false; // 移动设备检测标志
+let longPressTimer = null;
+const LONG_PRESS_DURATION = 500; // 长按触发时间（毫秒）
+const STORAGE_KEY = 'minesweeper_game_state'; // localStorage存储键名
 
 // DOM 元素
 const gameBoardElement = document.getElementById('gameBoard');
@@ -23,9 +27,24 @@ const rowsInput = document.getElementById('rows');
 const colsInput = document.getElementById('cols');
 const minesInput = document.getElementById('mines');
 
+// 检测是否为移动设备
+function detectMobile() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    // 简单的移动设备检测逻辑
+    isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    console.log(`设备检测结果: ${isMobile ? '移动设备' : '桌面设备'}`);
+}
+
 // 初始化游戏
 function initGame() {
     console.log('初始化游戏');
+
+    // 清除任何可能存在的保存状态
+    clearSavedGameState();
+    
+    // 检测设备类型
+    detectMobile();
+
     // 重置游戏状态
     gameBoard = [];
     revealedCells = 0;
@@ -33,19 +52,19 @@ function initGame() {
     gameStarted = false;
     gameOver = false;
     seconds = 0;
-    
+
     // 更新计数器显示
     updateCounters();
-    
+
     // 清除计时器
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
     }
-    
+
     // 重置表情按钮
     resetButton.textContent = '😊';
-    
+
     // 创建游戏板
     createGameBoard();
     console.log(`游戏板创建完成: ${rows}行 x ${cols}列, ${totalMines}个地雷`);
@@ -78,10 +97,36 @@ function createGameBoard() {
             
             // 添加点击事件
             cell.addEventListener('click', () => handleCellClick(row, col));
+            
+            // 右键点击标记（桌面端）
             cell.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
                 handleCellRightClick(row, col);
             });
+            
+            // 移动设备长按标记
+            if (isMobile) {
+                cell.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    longPressTimer = setTimeout(() => {
+                        handleCellRightClick(row, col);
+                    }, LONG_PRESS_DURATION);
+                });
+                
+                cell.addEventListener('touchend', () => {
+                    if (longPressTimer) {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = null;
+                    }
+                });
+                
+                cell.addEventListener('touchmove', () => {
+                    if (longPressTimer) {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = null;
+                    }
+                });
+            }
             
             gameBoardElement.appendChild(cell);
         }
@@ -179,7 +224,7 @@ function handleCellClick(row, col) {
     checkWinCondition();
 }
 
-// 处理单元格右键点击
+// 处理单元格右键点击（标记地雷）
 function handleCellRightClick(row, col) {
     // 如果游戏已结束或单元格已被揭示，则不处理
     if (gameOver || gameBoard[row][col].isRevealed) {
@@ -213,7 +258,7 @@ function handleCellRightClick(row, col) {
     checkWinCondition();
 }
 
-// 揭示单元格
+// 在revealCell函数末尾添加保存游戏状态
 function revealCell(row, col) {
     // 如果单元格已被揭示或已被标记，则不处理
     if (gameBoard[row][col].isRevealed || gameBoard[row][col].isFlagged) {
@@ -359,11 +404,9 @@ function showGameOverScreen(isWin) {
     document.body.appendChild(gameOverScreen);
     
     // 为重新开始这局游戏按钮添加事件监听器
-    const restartSameGameBtn = document.getElementById('restartSameGameButton');
-    console.log('restartSameGameButton元素:', restartSameGameBtn);
-    
+    // 修复按钮无响应的问题：直接在创建元素后立即绑定事件监听器
+    const restartSameGameBtn = gameOverScreen.querySelector('#restartSameGameButton');
     if (restartSameGameBtn) {
-        console.log('找到restartSameGameButton，准备绑定点击事件');
         restartSameGameBtn.addEventListener('click', () => {
             console.log('restartSameGameButton被点击了！');
             // 移除游戏结束界面
@@ -371,18 +414,20 @@ function showGameOverScreen(isWin) {
             // 重新开始这局游戏
             restartSameGame();
         });
-        console.log('restartSameGameButton点击事件绑定成功');
     } else {
         console.error('未找到restartSameGameButton元素！');
     }
     
     // 为重新开始按钮添加事件监听器
-    document.getElementById('restartButton').addEventListener('click', () => {
-        // 移除游戏结束界面
-        document.body.removeChild(gameOverScreen);
-        // 重新初始化游戏
-        initGame();
-    });
+    const restartBtn = gameOverScreen.querySelector('#restartButton');
+    if (restartBtn) {
+        restartBtn.addEventListener('click', () => {
+            // 移除游戏结束界面
+            document.body.removeChild(gameOverScreen);
+            // 重新初始化游戏
+            initGame();
+        });
+    }
 }
 
 // 更新单元格显示
@@ -437,14 +482,18 @@ function startTimer() {
             updateCounters();
         }, 1000);
         
-        // 保存游戏状态和设置，不依赖于isRestarting标记
-        console.log('保存当前游戏状态和设置');
-        previousGameBoard = JSON.parse(JSON.stringify(gameBoard));
-        previousGameSettings = {
-            rows: rows,
-            cols: cols,
-            totalMines: totalMines
-        };
+        // 保存游戏状态和设置，但在重新开始游戏时不保存（避免覆盖恢复的状态）
+        if (!(typeof isRestarting !== 'undefined' && isRestarting)) {
+            console.log('保存当前游戏状态和设置');
+            previousGameBoard = JSON.parse(JSON.stringify(gameBoard));
+            previousGameSettings = {
+                rows: rows,
+                cols: cols,
+                totalMines: totalMines
+            };
+        } else {
+            console.log('正在重新开始游戏，不保存状态');
+        }
         
         // 重置重新开始标记
         if (typeof isRestarting !== 'undefined' && isRestarting) {
@@ -465,17 +514,26 @@ function updateCounters() {
 
 // 检查游戏胜利条件
 function checkWinCondition() {
-    // 胜利条件：所有非地雷的格子都被揭示，或者所有地雷都被标记
+    // 胜利条件：
+    // 1. 所有非地雷的格子都被揭示（无论地雷是否被标记）
+    // 2. 或者所有地雷都被正确标记并且所有非地雷格子都被揭示
     const totalSafeCells = rows * cols - totalMines;
     const allSafeCellsRevealed = revealedCells === totalSafeCells;
-    const allMinesFlagged = flaggedCells === totalMines && 
-                            Array.from({length: rows}, (_, row) => 
-                                Array.from({length: cols}, (_, col) => 
-                                    gameBoard[row][col].isMine ? gameBoard[row][col].isFlagged : true
-                                ).every(Boolean)
-                            ).every(Boolean);
     
-    if (allSafeCellsRevealed || allMinesFlagged) {
+    // 检查所有地雷是否都被正确标记
+    let allMinesFlagged = true;
+    for (let row = 0; row < rows && allMinesFlagged; row++) {
+        for (let col = 0; col < cols && allMinesFlagged; col++) {
+            // 如果是地雷但未被标记，或者不是地雷但被标记，则标记不全部正确
+            if ((gameBoard[row][col].isMine && !gameBoard[row][col].isFlagged) ||
+                (!gameBoard[row][col].isMine && gameBoard[row][col].isFlagged)) {
+                allMinesFlagged = false;
+            }
+        }
+    }
+    
+    // 胜利条件：要么所有安全格子都被揭示，要么所有地雷都被正确标记
+    if (allSafeCellsRevealed || (allMinesFlagged && flaggedCells === totalMines)) {
         gameOver = true;
         clearInterval(timerInterval);
         resetButton.textContent = '😎';
@@ -597,8 +655,8 @@ function restartSameGame() {
             console.log('重新开始这局游戏：恢复上一局状态');
             
             // 重置游戏状态但保留地雷位置和游戏设置
-            revealedCells = 0;
-            flaggedCells = 0;
+            revealedCells = 0; // 重置为0
+            flaggedCells = 0; // 重置为0
             gameStarted = false; // 暂时设置为未开始，让startTimer函数来管理
             gameOver = false;
             seconds = 0;
@@ -625,14 +683,34 @@ function restartSameGame() {
             // 恢复上一局的游戏状态
             gameBoard = JSON.parse(JSON.stringify(previousGameBoard));
             
-            console.log('游戏状态恢复成功');
+            // 清除所有标记（旗子）和已揭示的单元格状态
+            console.log('清除所有标记（旗子）和已揭示的单元格状态');
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    // 清除标记状态
+                    gameBoard[row][col].isFlagged = false;
+                    // 清除已揭示状态
+                    gameBoard[row][col].isRevealed = false;
+                }
+            }
+            
+            console.log(`重置后：已揭示单元格=${revealedCells}，已标记单元格=${flaggedCells}`);
             
             // 重新创建游戏板但不生成新地雷
             recreateGameBoard(false);
             
-            // 标记为重新开始游戏并启动计时器
+            // 标记为重新开始游戏并延迟启动计时器，确保DOM已更新
             isRestarting = true;
-            startTimer();
+            setTimeout(() => {
+                console.log('延迟后启动计时器，确保DOM已更新');
+                // 再次更新所有单元格的显示状态，确保正确应用
+                for (let row = 0; row < rows; row++) {
+                    for (let col = 0; col < cols; col++) {
+                        updateCellDisplay(row, col);
+                    }
+                }
+                startTimer();
+            }, 100);
             
             showFeedback('重新开始这局游戏成功');
         } else {
@@ -683,6 +761,30 @@ function recreateGameBoard(generateNewMines = true) {
                 e.preventDefault();
                 handleCellRightClick(row, col);
             });
+            
+            // 移动设备长按标记
+            if (isMobile) {
+                cell.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    longPressTimer = setTimeout(() => {
+                        handleCellRightClick(row, col);
+                    }, LONG_PRESS_DURATION);
+                });
+                
+                cell.addEventListener('touchend', () => {
+                    if (longPressTimer) {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = null;
+                    }
+                });
+                
+                cell.addEventListener('touchmove', () => {
+                    if (longPressTimer) {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = null;
+                    }
+                });
+            }
             
             gameBoardElement.appendChild(cell);
         }
@@ -766,8 +868,11 @@ function applyBoardSettings() {
 
 // 添加事件监听器
 resetButton.addEventListener('click', () => {
-    showEasterEgg();
-    showFeedback('显示彩蛋成功');
+    try {
+        restartSameGame();
+    } catch (error) {
+        showFeedback('重新开始游戏失败，原因：' + error.message, false);
+    }
 });
 
 restartSameGameButton.addEventListener('click', restartSameGame);
@@ -792,3 +897,75 @@ cancelSettingsButton.addEventListener('click', () => {
 
 // 初始化游戏
 initGame();
+
+// 保存游戏状态到localStorage
+function saveGameState() {
+    try {
+        if (gameOver) return; // 游戏结束时不保存状态
+        
+        const gameState = {
+            gameBoard: gameBoard,
+            revealedCells: revealedCells,
+            flaggedCells: flaggedCells,
+            totalMines: totalMines,
+            rows: rows,
+            cols: cols,
+            gameStarted: gameStarted,
+            gameOver: gameOver,
+            seconds: seconds,
+            timestamp: Date.now()
+        };
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+        console.log('游戏状态已保存到localStorage');
+    } catch (error) {
+        console.error('保存游戏状态失败:', error);
+    }
+}
+
+// 从localStorage恢复游戏状态
+function loadGameState() {
+    try {
+        const savedState = localStorage.getItem(STORAGE_KEY);
+        if (savedState) {
+            const gameState = JSON.parse(savedState);
+            
+            // 检查保存时间是否在24小时内
+            const now = Date.now();
+            const savedTime = gameState.timestamp;
+            if (now - savedTime > 24 * 60 * 60 * 1000) {
+                console.log('保存的游戏状态已过期，创建新游戏');
+                localStorage.removeItem(STORAGE_KEY);
+                return false;
+            }
+            
+            // 恢复游戏状态
+            gameBoard = gameState.gameBoard;
+            revealedCells = gameState.revealedCells;
+            flaggedCells = gameState.flaggedCells;
+            totalMines = gameState.totalMines;
+            rows = gameState.rows;
+            cols = gameState.cols;
+            gameStarted = gameState.gameStarted;
+            gameOver = gameState.gameOver;
+            seconds = gameState.seconds;
+            
+            // 保存到previousGameBoard和previousGameSettings
+            previousGameBoard = JSON.parse(JSON.stringify(gameBoard));
+            previousGameSettings = { rows, cols, totalMines };
+            
+            console.log('游戏状态已从localStorage恢复');
+            return true;
+        }
+    } catch (error) {
+        console.error('恢复游戏状态失败:', error);
+        localStorage.removeItem(STORAGE_KEY);
+    }
+    return false;
+}
+
+// 清除保存的游戏状态
+function clearSavedGameState() {
+    localStorage.removeItem(STORAGE_KEY);
+    console.log('保存的游戏状态已清除');
+}
