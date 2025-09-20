@@ -426,6 +426,7 @@ function showGameOverScreen(isWin) {
             document.body.removeChild(gameOverScreen);
             // 重新初始化游戏
             initGame();
+            showFeedback('开始新游戏成功');
         });
     }
 }
@@ -606,10 +607,10 @@ function showFeedback(message, isSuccess = true) {
     feedbackMessage.classList.remove('show', 'success', 'error');
     feedbackMessage.classList.add('show', isSuccess ? 'success' : 'error');
     
-    // 3秒后自动隐藏
+    // 1秒后自动隐藏
     setTimeout(() => {
         feedbackMessage.classList.remove('show');
-    }, 3000);
+    }, 1000);
 }
 
 // 显示彩蛋界面
@@ -802,7 +803,7 @@ function recreateGameBoard(generateNewMines = true) {
 function showBoardSettings() {
     try {
         boardSettingsScreen.classList.add('active');
-        showFeedback('显示棋盘设置成功');
+        // 移除设置成功提示
     } catch (error) {
         showFeedback('显示棋盘设置失败，原因：' + error.message, false);
     }
@@ -813,7 +814,7 @@ function hideBoardSettings() {
     try {
         boardSettingsScreen.classList.remove('active');
     } catch (error) {
-        console.error('隐藏棋盘设置失败:', error);
+        showFeedback('关闭棋盘设置失败，原因：' + error.message, false);
     }
 }
 
@@ -860,7 +861,7 @@ function applyBoardSettings() {
         // 隐藏设置界面
         hideBoardSettings();
         
-        showFeedback('应用棋盘设置成功');
+        // 移除设置成功提示
     } catch (error) {
         showFeedback('应用棋盘设置失败，原因：' + error.message, false);
     }
@@ -869,7 +870,8 @@ function applyBoardSettings() {
 // 添加事件监听器
 resetButton.addEventListener('click', () => {
     try {
-        restartSameGame();
+        // 将表情按钮点击改为显示彩蛋界面
+        showEasterEgg();
     } catch (error) {
         showFeedback('重新开始游戏失败，原因：' + error.message, false);
     }
@@ -892,7 +894,7 @@ applySettingsButton.addEventListener('click', applyBoardSettings);
 
 cancelSettingsButton.addEventListener('click', () => {
     hideBoardSettings();
-    showFeedback('取消棋盘设置成功');
+    // 移除取消设置成功提示
 });
 
 // 初始化游戏
