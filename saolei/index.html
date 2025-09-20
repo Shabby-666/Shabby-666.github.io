@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>精美的扫雷游戏</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>扫雷游戏</h1>
+        
+        <div class="game-info">
+            <div class="counter" id="mineCounter">0</div>
+            <button id="resetButton">😊</button>
+            <div class="counter" id="timeCounter">0</div>
+        </div>
+        
+        <!-- 重置按钮区域 -->
+        <div class="reset-buttons">
+            <button id="restartSameGameButton">重新开始这局游戏</button>
+            <button id="startNewGameButton">开始新游戏</button>
+            <button id="boardSettingsButton">棋盘设置</button>
+        </div>
+        
+        <div id="gameBoard"></div>
+        
+        <!-- 棋盘设置界面 (默认隐藏) -->
+        <div id="boardSettingsScreen" class="settings-screen">
+            <div class="settings-content">
+                <h2>棋盘设置</h2>
+                <div class="options">
+                    <div class="option">
+                        <label for="rows">行数:</label>
+                        <input type="number" id="rows" min="5" max="30" value="10">
+                    </div>
+                    <div class="option">
+                        <label for="cols">列数:</label>
+                        <input type="number" id="cols" min="5" max="30" value="10">
+                    </div>
+                    <div class="option">
+                        <label for="mines">地雷数:</label>
+                        <input type="number" id="mines" min="1" max="200" value="15">
+                    </div>
+                </div>
+                <div class="settings-buttons">
+                    <button id="applySettingsButton">应用设置</button>
+                    <button id="cancelSettingsButton">取消</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 操作反馈提示 (默认隐藏) -->
+        <div id="feedbackMessage" class="feedback-message"></div>
+    </div>
+</body>
+</html>
