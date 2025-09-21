@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>精美的扫雷游戏</title>
+    <title>原汁原味的扫雷</title>
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 </head>
 <body>
     <div class="container">
-        <h1>扫雷游戏</h1>
+        <h1>扫雷 by _Chinese_Player_</h1>
         
         <div class="game-info">
             <div class="counter" id="mineCounter">0</div>
@@ -22,6 +22,7 @@
             <button id="restartSameGameButton">重新开始这局游戏</button>
             <button id="startNewGameButton">开始新游戏</button>
             <button id="boardSettingsButton">棋盘设置</button>
+            <button id="helpButton" onclick="showHelpModal()">帮助</button>
         </div>
         
         <div id="gameBoard"></div>
@@ -53,6 +54,30 @@
         
         <!-- 操作反馈提示 (默认隐藏) -->
         <div id="feedbackMessage" class="feedback-message"></div>
+        
+        <!-- 帮助弹窗 (默认隐藏) -->
+        <div id="helpModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>键位帮助</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="help-section">
+                        <h3>电脑版：</h3>
+                        <p>左键翻开</p>
+                        <p>右键标记</p>
+                    </div>
+                    <div class="help-section">
+                        <h3>手机版：</h3>
+                        <p>点击翻开</p>
+                        <p>长按标记</p>
+                    </div>
+                    <div style="margin-top: 30px; text-align: center;">
+                        <button id="closeHelpButton" class="close-button">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

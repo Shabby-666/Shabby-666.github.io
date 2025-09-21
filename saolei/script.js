@@ -17,15 +17,25 @@ let longPressTimer = null;
 const LONG_PRESS_DURATION = 500; // 长按触发时间（毫秒）
 const STORAGE_KEY = 'minesweeper_game_state'; // localStorage存储键名
 
-// DOM 元素
-const gameBoardElement = document.getElementById('gameBoard');
-const mineCounterElement = document.getElementById('mineCounter');
-const timeCounterElement = document.getElementById('timeCounter');
-const resetButton = document.getElementById('resetButton');
-const customGameButton = document.getElementById('customGameButton');
-const rowsInput = document.getElementById('rows');
-const colsInput = document.getElementById('cols');
-const minesInput = document.getElementById('mines');
+// DOM 元素 - 将在DOMContentLoaded事件中初始化
+let gameBoardElement;
+let mineCounterElement;
+let timeCounterElement;
+let resetButton;
+let customGameButton;
+let rowsInput;
+let colsInput;
+let minesInput;
+let helpButton;
+let helpModal;
+let closeHelpButton;
+let restartSameGameButton;
+let startNewGameButton;
+let boardSettingsButton;
+let boardSettingsScreen;
+let applySettingsButton;
+let cancelSettingsButton;
+let feedbackMessage;
 
 // 检测是否为移动设备
 function detectMobile() {
@@ -395,7 +405,7 @@ function showGameOverScreen(isWin) {
             <h2>${message}</h2>
             <div class="game-over-buttons">
                 <button id="restartSameGameButton">重新开始这局游戏</button>
-                <button id="restartButton">重新开始</button>
+                <button id="restartButton">开始新游戏</button>
             </div>
         </div>
     `;
@@ -516,25 +526,11 @@ function updateCounters() {
 // 检查游戏胜利条件
 function checkWinCondition() {
     // 胜利条件：
-    // 1. 所有非地雷的格子都被揭示（无论地雷是否被标记）
-    // 2. 或者所有地雷都被正确标记并且所有非地雷格子都被揭示
+    // 只要所有非地雷的格子都被揭示，就判定胜利，不管地雷是否被标记
     const totalSafeCells = rows * cols - totalMines;
     const allSafeCellsRevealed = revealedCells === totalSafeCells;
     
-    // 检查所有地雷是否都被正确标记
-    let allMinesFlagged = true;
-    for (let row = 0; row < rows && allMinesFlagged; row++) {
-        for (let col = 0; col < cols && allMinesFlagged; col++) {
-            // 如果是地雷但未被标记，或者不是地雷但被标记，则标记不全部正确
-            if ((gameBoard[row][col].isMine && !gameBoard[row][col].isFlagged) ||
-                (!gameBoard[row][col].isMine && gameBoard[row][col].isFlagged)) {
-                allMinesFlagged = false;
-            }
-        }
-    }
-    
-    // 胜利条件：要么所有安全格子都被揭示，要么所有地雷都被正确标记
-    if (allSafeCellsRevealed || (allMinesFlagged && flaggedCells === totalMines)) {
+    if (allSafeCellsRevealed) {
         gameOver = true;
         clearInterval(timerInterval);
         resetButton.textContent = '😎';
@@ -591,15 +587,6 @@ function startCustomGame() {
     // 重新初始化游戏
     initGame();
 }
-
-// DOM 元素
-const restartSameGameButton = document.getElementById('restartSameGameButton');
-const startNewGameButton = document.getElementById('startNewGameButton');
-const boardSettingsButton = document.getElementById('boardSettingsButton');
-const boardSettingsScreen = document.getElementById('boardSettingsScreen');
-const applySettingsButton = document.getElementById('applySettingsButton');
-const cancelSettingsButton = document.getElementById('cancelSettingsButton');
-const feedbackMessage = document.getElementById('feedbackMessage');
 
 // 显示操作反馈
 function showFeedback(message, isSuccess = true) {
@@ -867,39 +854,6 @@ function applyBoardSettings() {
     }
 }
 
-// 添加事件监听器
-resetButton.addEventListener('click', () => {
-    try {
-        // 将表情按钮点击改为显示彩蛋界面
-        showEasterEgg();
-    } catch (error) {
-        showFeedback('重新开始游戏失败，原因：' + error.message, false);
-    }
-});
-
-restartSameGameButton.addEventListener('click', restartSameGame);
-
-startNewGameButton.addEventListener('click', () => {
-    try {
-        initGame();
-        showFeedback('开始新游戏成功');
-    } catch (error) {
-        showFeedback('开始新游戏失败，原因：' + error.message, false);
-    }
-});
-
-boardSettingsButton.addEventListener('click', showBoardSettings);
-
-applySettingsButton.addEventListener('click', applyBoardSettings);
-
-cancelSettingsButton.addEventListener('click', () => {
-    hideBoardSettings();
-    // 移除取消设置成功提示
-});
-
-// 初始化游戏
-initGame();
-
 // 保存游戏状态到localStorage
 function saveGameState() {
     try {
@@ -966,8 +920,105 @@ function loadGameState() {
     return false;
 }
 
+// 全局帮助功能函数
+function showHelpModal() {
+    const helpModal = document.getElementById('helpModal');
+    if (helpModal) {
+        // 清除内联样式，确保CSS类可以正常工作
+        helpModal.style.display = '';
+        helpModal.classList.add('active');
+    }
+}
+
+function hideHelpModal() {
+    const helpModal = document.getElementById('helpModal');
+    if (helpModal) {
+        helpModal.classList.remove('active');
+        // 使用setTimeout确保动画效果正常显示
+        setTimeout(() => {
+            if (!helpModal.classList.contains('active')) {
+                // 不再设置内联样式，而是通过CSS类控制
+            }
+        }, 300);
+    }
+}
+
+// 页面加载完成后执行额外的初始化
+// 帮助按钮和弹窗的事件监听器现在在DOMContentLoaded中统一处理
+
 // 清除保存的游戏状态
 function clearSavedGameState() {
     localStorage.removeItem(STORAGE_KEY);
     console.log('保存的游戏状态已清除');
 }
+
+// 在DOM完全加载后初始化
+document.addEventListener('DOMContentLoaded', () => {
+    // 获取DOM元素
+    gameBoardElement = document.getElementById('gameBoard');
+    mineCounterElement = document.getElementById('mineCounter');
+    timeCounterElement = document.getElementById('timeCounter');
+    resetButton = document.getElementById('resetButton');
+    customGameButton = document.getElementById('customGameButton');
+    rowsInput = document.getElementById('rows');
+    colsInput = document.getElementById('cols');
+    minesInput = document.getElementById('mines');
+    helpButton = document.getElementById('helpButton');
+    helpModal = document.getElementById('helpModal');
+    closeHelpButton = document.getElementById('closeHelpButton');
+    restartSameGameButton = document.getElementById('restartSameGameButton');
+    startNewGameButton = document.getElementById('startNewGameButton');
+    boardSettingsButton = document.getElementById('boardSettingsButton');
+    boardSettingsScreen = document.getElementById('boardSettingsScreen');
+    applySettingsButton = document.getElementById('applySettingsButton');
+    cancelSettingsButton = document.getElementById('cancelSettingsButton');
+    feedbackMessage = document.getElementById('feedbackMessage');
+
+    // 添加事件监听器
+    resetButton.addEventListener('click', () => {
+        try {
+            // 将表情按钮点击改为显示彩蛋界面
+            showEasterEgg();
+        } catch (error) {
+            showFeedback('重新开始游戏失败，原因：' + error.message, false);
+        }
+    });
+
+    restartSameGameButton.addEventListener('click', restartSameGame);
+
+    startNewGameButton.addEventListener('click', () => {
+        try {
+            initGame();
+            showFeedback('开始新游戏成功');
+        } catch (error) {
+            showFeedback('开始新游戏失败，原因：' + error.message, false);
+        }
+    });
+
+    boardSettingsButton.addEventListener('click', showBoardSettings);
+
+    applySettingsButton.addEventListener('click', applyBoardSettings);
+
+    cancelSettingsButton.addEventListener('click', () => {
+        hideBoardSettings();
+        // 移除取消设置成功提示
+    });
+
+    // 帮助按钮事件监听器
+    if (helpButton) {
+        helpButton.addEventListener('click', showHelpModal);
+    }
+
+    // 关闭按钮事件监听器
+    closeHelpButton.addEventListener('click', hideHelpModal);
+
+    // 点击弹窗外部区域关闭弹窗
+    helpModal.addEventListener('click', (event) => {
+        if (event.target === helpModal) {
+            hideHelpModal();
+        }
+    });
+
+    // 初始化游戏
+    initGame();
+});
