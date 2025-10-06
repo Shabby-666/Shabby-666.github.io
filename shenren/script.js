@@ -1,27 +1,19 @@
-// 1. 页面加载完成后隐藏加载动画，显示表格
+// 1. 页面加载后直接执行表格入场动画
 window.addEventListener('load', () => {
-    const loader = document.getElementById('loader');
-    // 延迟1秒模拟加载，贴合MC游戏加载体验
-    setTimeout(() => {
-        loader.style.opacity = '0'; // 渐变透明
-        setTimeout(() => {
-            loader.style.display = 'none';
-            initTableAnimation(); // 执行表格入场动画
-        }, 800);
-    }, 1000);
+    initTableAnimation();
 });
 
-// 2. 表格逐行渐入动画（瀑布流效果）
+// 2. 表格逐行渐入动画（瀑布流效果，增强视觉体验）
 function initTableAnimation() {
     const tableRows = document.querySelectorAll('#godTable tbody tr');
     tableRows.forEach((row, index) => {
-        // 初始状态：透明+下移
+        // 初始状态：透明+向下偏移20px
         row.style.opacity = '0';
         row.style.transform = 'translateY(20px)';
-        // 每行延迟0.2秒入场，避免拥挤
+        // 每个行延迟0.2秒入场，避免同时显示拥挤
         row.style.transition = `opacity 0.5s ease ${index * 0.2}s, transform 0.5s ease ${index * 0.2}s`;
         
-        // 触发显示
+        // 触发显示（轻微延迟，让动画更自然）
         setTimeout(() => {
             row.style.opacity = '1';
             row.style.transform = 'translateY(0)';
@@ -29,11 +21,71 @@ function initTableAnimation() {
     });
 }
 
-// 3. 滚动时排名数字动态变色（MC彩虹光效）
+// 3. 滚动时排名数字动态变色（MC彩虹光效，滚动时触发）
 window.addEventListener('scroll', () => {
     const rankCells = document.querySelectorAll('.rank-cell');
     rankCells.forEach(cell => {
         const rect = cell.getBoundingClientRect();
+        // 仅当排名单元格进入视口时才变色（避免浪费性能）
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+            // 基于当前时间+排名生成唯一色调（0-360），实现彩虹效果
+            const hue = (Date.now() % 360) + (cell.dataset.rank.charCodeAt(1) * 10);
+            cell.style.color = `hsl(${hue}, 100%, 50%)`; // HSL颜色，饱和度100%，亮度50%
+            cell.style.textShadow = `0 0 8px hsl(${hue}, 100%, 50%)`; // 同色发光阴影
+        }
+    });
+});
+
+// 4. 点击表格行展开/关闭玩家详情（交互功能）
+document.addEventListener('DOMContentLoaded', () => {
+    const tableRows = document.querySelectorAll('#godTable tbody tr');
+    tableRows.forEach(row => {
+        row.addEventListener('click', () => {
+            // 检查当前行下方是否已有详情行，有则删除（关闭详情）
+            const hasDetail = row.nextElementSibling?.classList.contains('detail-row');
+            if (hasDetail) {
+                row.nextElementSibling.remove();
+                return;
+            }
+
+            // 无详情行则创建：先获取当前行的玩家名称
+            const playerName = row.cells[1].textContent;
+            // 根据玩家名获取对应详情（调用下方函数）
+            const detailContent = getPlayerDetail(playerName);
+            
+            // 创建详情行元素
+            const detailRow = document.createElement('tr');
+            detailRow.className = 'detail-row';
+            detailRow.style.transition = 'all 0.3s ease'; // 详情行显示动画
+
+            // 创建详情单元格（跨4列，占满表格宽度）
+            const detailCell = document.createElement('td');
+            detailCell.colSpan = 4;
+            detailCell.style.padding = '1rem';
+            detailCell.style.color = '#D0D0D0'; // 浅灰色文字
+            detailCell.style.fontSize = '1rem';
+            // 详情前缀用MC绿色，加"[详情]"标识，贴合风格
+            detailCell.innerHTML = `<span style="color:#00FF00">[详情]</span> ${detailContent}`;
+
+            // 把单元格加入行，再把行插入到当前行下方
+            detailRow.appendChild(detailCell);
+            row.after(detailRow);
+        });
+    });
+});
+
+// 5. 玩家详情数据（根据玩家名返回对应详情，可自定义修改）
+function getPlayerDetail(name) {
+    const details = {
+        '史蒂夫·建筑大师': '建筑作品坐标：X:1250, Y:64, Z:-800，服务器已设为「官方景点」，输入/tp 1250 64 -800可直接传送参观',
+        '爱丽克斯·红石怪': '红石教程发布在服务器论坛：/forum/redstone-alex，交易所坐标：X:800, Y:72, Z:500，新手可免费使用所有功能',
+        'Notch·生存狂': '每周六晚8点在服务器频道直播：/live/notch，生存物资兑换点：X:-300, Y:68, Z:-200，用腐肉可换钻石',
+        '苦力怕·陷阱师': '陷阱地图入口：X:-500, Y:70, Z:1000，所有陷阱仅触发彩色粒子和鸡叫音效，无任何伤害，放心体验',
+        '末影人·收藏家': '收藏展示室坐标：X:1000, Y:80, Z:-600，禁止触碰龙蛋（会触发3只末影人NPC追击，持续1分钟）'
+    };
+    // 若没有对应玩家的详情，返回默认文本
+    return details[name] || '暂无该玩家详细信息，可联系管理员补充';
+}
         // 仅当单元格进入视口时变色
         if (rect.top < window.innerHeight && rect.bottom > 0) {
             // 基于时间和排名生成唯一色调，颜色不重复
