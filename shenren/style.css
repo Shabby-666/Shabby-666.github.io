@@ -7,16 +7,17 @@
     letter-spacing: 1px;
 }
 
-/* 2. 页面背景（MC草方块纹理+滚动动画） */
+/* 2. 页面背景（MC草方块纹理+缓慢滚动） */
 body {
-    background-image: url('https://picsum.photos/id/110/200/200');
+    background-image: url('https://picsum.photos/id/110/200/200'); /* MC草方块纹理 */
     background-size: 64px 64px;
     background-attachment: fixed;
     padding: 2rem 1rem;
     min-height: 100vh;
-    animation: bgScroll 30s linear infinite;
+    animation: bgScroll 30s linear infinite; /* 背景缓慢滚动，增强MC氛围 */
 }
 
+/* 背景滚动动画 */
 @keyframes bgScroll {
     0% { background-position: 0 0; }
     100% { background-position: 640px 640px; }
@@ -26,14 +27,138 @@ body {
 .container {
     max-width: 1300px;
     margin: 0 auto;
-    background-color: rgba(15, 15, 15, 0.95);
-    border: 6px solid #8B4513;
-    border-bottom-color: #633411;
+    background-color: rgba(15, 15, 15, 0.95); /* 深色半透明背景 */
+    border: 6px solid #8B4513; /* MC橡木色边框 */
+    border-bottom-color: #633411; /* 边框阴影色，增强3D感 */
     border-right-color: #633411;
     border-top-color: #A0522D;
     border-left-color: #A0522D;
     padding: 2rem;
     box-shadow: 8px 8px 0 #3C2A1E, 
+                16px 16px 0 rgba(0,0,0,0.3),
+                inset 0 0 20px rgba(0,0,0,0.8); /* 外阴影+内阴影，更像MC方块 */
+    transform-style: preserve-3d;
+    position: relative;
+}
+
+/* 4. 标题样式（MC黄金色+方块装饰） */
+.mc-title {
+    text-align: center;
+    color: #FFD700; /* MC黄金色 */
+    text-shadow: 4px 4px 0 #000,
+                0 0 10px rgba(255,215,0,0.7); /* 文字阴影，增强立体感 */
+    margin-bottom: 2.5rem;
+    font-size: 3rem;
+}
+
+/* 标题前后加MC风格方块符号 */
+.mc-title::before, .mc-title::after {
+    content: "[]";
+    color: #00FF00; /* MC绿色 */
+    margin: 0 1rem;
+    font-size: 2.5rem;
+}
+
+/* 5. 表格核心样式 */
+.god-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: #FFFFFF; /* 文字白色，适配深色背景 */
+}
+
+/* 表头（MC深石板风格） */
+.god-table th {
+    background: linear-gradient(135deg, #4A4A4A 0%, #333333 100%); /* 渐变深灰，像石板 */
+    border: 4px solid #5D5D5D;
+    border-bottom-color: #2D2D2D;
+    border-right-color: #2D2D2D;
+    border-top-color: #777777;
+    border-left-color: #777777;
+    padding: 1.2rem;
+    text-align: left;
+    color: #00FF00; /* MC绿色表头文字 */
+    font-size: 1.3rem;
+    text-shadow: 2px 2px 0 #000;
+    position: relative;
+    z-index: 2;
+}
+
+/* 表格内容（MC石砖风格） */
+.god-table td {
+    background: linear-gradient(135deg, #383838 0%, #282828 100%); /* 石砖色渐变 */
+    border: 3px solid #444444;
+    border-bottom-color: #1F1F1F;
+    border-right-color: #1F1F1F;
+    border-top-color: #555555;
+    border-left-color: #555555;
+    padding: 1.5rem;
+    font-size: 1.1rem;
+    transition: all 0.3s ease; /* 过渡动画，用于悬停效果 */
+    text-shadow: 1px 1px 0 #000;
+    position: relative;
+}
+
+/* 6. 排名列特殊样式（3D数字+方块背景） */
+.rank-cell {
+    text-align: center;
+    font-size: 2rem;
+    color: #FF4500; /* MC橙红色排名 */
+    font-weight: bold;
+    background-image: url('https://picsum.photos/id/225/64/64'); /* 石砖纹理背景 */
+    background-size: 32px 32px;
+    background-blend-mode: overlay; /* 背景混合，增强质感 */
+}
+
+/* 排名数字3D效果（伪元素层） */
+.rank-cell::after {
+    content: attr(data-rank);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -52%) scale(0.95);
+    color: #CC3700; /* 深色阴影，模拟3D凸起 */
+    z-index: -1;
+}
+
+/* 7. 行悬浮效果（MC方块抬起） */
+.god-table tr:hover td {
+    background: linear-gradient(135deg, #454545 0%, #353535 100%); /* 悬停时加深背景 */
+    border-color: #666666;
+    border-bottom-color: #2D2D2D;
+    border-right-color: #2D2D2D;
+    transform: translateY(-5px); /* 向上抬起，像MC方块被选中 */
+    box-shadow: 0 5px 0 #1F1F1F,
+                0 10px 15px rgba(0,0,0,0.4); /* 阴影增强，突出抬起效果 */
+}
+
+/* 表头同步高亮 */
+.god-table tr:hover th {
+    background: linear-gradient(135deg, #5A5A5A 0%, #434343 100%);
+}
+
+/* 8. 评价列样式（MC绿色边框提示） */
+.comment-cell {
+    border-left: 4px solid #00FF00; /* 左侧绿色边框，区分评价列 */
+    font-style: italic;
+    color: #E0E0E0; /* 浅灰色文字，突出边框 */
+}
+
+/* 9. 详情行样式（点击展开的行） */
+.detail-row td {
+    background: linear-gradient(135deg, #404040 0%, #303030 100%) !important;
+    border-top: none !important; /* 去掉上边框，与上方行无缝衔接 */
+    border-left-color: #555 !important;
+    border-right-color: #555 !important;
+}
+
+/* 10. 响应式调整（手机端适配） */
+@media (max-width: 992px) {
+    .mc-title { font-size: 2.2rem; }
+    .god-table th { padding: 1rem; font-size: 1.1rem; }
+    .god-table td { padding: 1.2rem; font-size: 1rem; }
+    .rank-cell { font-size: 1.7rem; }
+}
                 16px 16px 0 rgba(0,0,0,0.3),
                 inset 0 0 20px rgba(0,0,0,0.8);
     transform-style: preserve-3d;
