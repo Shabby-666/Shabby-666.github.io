@@ -7,169 +7,107 @@
     letter-spacing: 1px;
 }
 
-/* 2. 页面背景（棕色泥土+绿色草地方块纹理） */
+/* 2. 页面背景（Minecraft 草方块纹理） */
 body {
-    background-image: url('https://picsum.photos/id/131/200/200'); /* 泥土纹理 */
+    background-image: url('https://picsum.photos/id/110/200/200');
     background-size: 64px 64px;
     background-attachment: fixed;
-    padding: 2rem 1rem;
+    padding: 0;
     min-height: 100vh;
-    animation: bgScroll 30s linear infinite;
-    overflow-x: hidden; /* 隐藏水平溢出 */
+    overflow: hidden;
 }
 
-@keyframes bgScroll {
-    0% { background-position: 0 0; }
-    100% { background-position: 640px 640px; }
-}
-
-/* 3. 主体容器（棕色橡木3D边框） */
+/* 3. 主体容器（Minecraft 深色界面） */
 .container {
-    max-width: 1300px;
-    margin: 2rem auto;
-    background-color: rgba(20, 20, 15, 0.95); /* 深棕色背景 */
-    border: 6px solid #8B5A2B; /* 棕色橡木边框 */
-    border-bottom-color: #6B451F;
-    border-right-color: #6B451F;
-    border-top-color: #A06A3A;
-    border-left-color: #A06A3A;
-    padding: 2rem;
-    box-shadow: 8px 8px 0 #5B3A1A, 
-                16px 16px 0 rgba(0,0,0,0.3),
-                inset 0 0 20px rgba(0,0,0,0.8);
-    transform-style: preserve-3d;
-    position: relative;
-    overflow-y: auto; /* 垂直溢出时显示滚动条 */
-    max-height: calc(100vh - 4rem);
+    width: 800px;
+    margin: 50px auto;
+    background-color: #1A1A1A;
+    border: 6px solid #2B2B2B;
+    border-bottom-color: #0A0A0A;
+    border-right-color: #0A0A0A;
+    border-top-color: #3B3B3B;
+    border-left-color: #3B3B3B;
+    padding: 20px;
+    box-shadow: 8px 8px 0 #0A0A0A, 
+                16px 16px 0 rgba(0,0,0,0.3);
 }
 
-/* 4. 标题样式（棕色+绿色装饰） */
+/* 4. 标题样式（绿色高亮） */
 .mc-title {
     text-align: center;
-    color: #8B5A2B; /* 棕色标题 */
-    text-shadow: 4px 4px 0 #000,
-                0 0 10px rgba(139, 90, 43, 0.7);
-    margin-bottom: 2.5rem;
-    font-size: 3rem;
+    color: #00FF00;
+    text-shadow: 2px 2px 0 #000;
+    margin-bottom: 20px;
+    font-size: 2rem;
 }
 
 .mc-title::before, .mc-title::after {
     content: "[]";
-    color: #228B22; /* 绿色装饰符号 */
-    margin: 0 1rem;
-    font-size: 2.5rem;
+    color: #00FF00;
+    margin: 0 10px;
+    font-size: 1.5rem;
 }
 
-/* 5. 表格核心样式 */
+/* 5. 表格核心样式（Minecraft 界面风格） */
 .god-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    color: #E0E0E0; /* 浅灰色文字 */
+    border-collapse: collapse;
+    color: #C0C0C0;
 }
 
-/* 表头（深棕色石板风格） */
+/* 表头（深灰色+绿色文字） */
 .god-table th {
-    background: linear-gradient(135deg, #5B3A1A 0%, #4B2A0A 100%); /* 深棕色渐变 */
-    border: 4px solid #7B4A2B;
-    border-bottom-color: #3B1A0A;
-    border-right-color: #3B1A0A;
-    border-top-color: #9B6A4B;
-    border-left-color: #9B6A4B;
-    padding: 1.2rem;
-    text-align: center; /* 排名列居中 */
-    color: #228B22; /* 绿色表头文字 */
-    font-size: 1.3rem;
-    text-shadow: 2px 2px 0 #000;
-    position: relative;
-    z-index: 2;
-}
-
-/* 排名列单独固定宽度 */
-.god-table th:first-child {
-    width: 80px;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-/* 表格内容（棕色石砖风格） */
-.god-table td {
-    background: linear-gradient(135deg, #6B451F 0%, #5B3A1A 100%); /* 棕色渐变 */
-    border: 3px solid #7B5A3B;
-    border-bottom-color: #2B1A0A;
-    border-right-color: #2B1A0A;
-    border-top-color: #8B6A4B;
-    border-left-color: #8B6A4B;
-    padding: 1.5rem;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
+    background-color: #333333;
+    border: 2px solid #444444;
+    border-bottom-color: #222222;
+    border-right-color: #222222;
+    border-top-color: #555555;
+    border-left-color: #555555;
+    padding: 10px;
+    text-align: left;
+    color: #00FF00;
+    font-size: 1rem;
     text-shadow: 1px 1px 0 #000;
-    position: relative;
 }
 
-/* 6. 排名列特殊样式（绿色数字+棕色背景） */
+/* 排名列特殊样式（红色数字+绿色背景） */
 .rank-cell {
     text-align: center;
-    font-size: 2rem;
-    color: #228B22; /* 绿色排名 */
+    font-size: 1.2rem;
+    color: #FF0000;
     font-weight: bold;
-    background-image: url('https://picsum.photos/id/131/64/64'); /* 泥土纹理背景 */
-    background-size: 32px 32px;
-    background-blend-mode: overlay;
+    background-color: #003300;
 }
 
-.rank-cell::after {
-    content: attr(data-rank);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -52%) scale(0.95);
-    color: #1A6A1A; /* 深绿色阴影 */
-    z-index: -1;
+/* 表格内容（深灰色+浅灰色文字） */
+.god-table td {
+    background-color: #222222;
+    border: 2px solid #333333;
+    border-bottom-color: #111111;
+    border-right-color: #111111;
+    border-top-color: #444444;
+    border-left-color: #444444;
+    padding: 10px;
+    font-size: 0.9rem;
+    text-shadow: 1px 1px 0 #000;
 }
 
-/* 7. 行悬浮效果（棕色方块抬起+绿色边框高光） */
-.god-table tr:hover td {
-    background: linear-gradient(135deg, #7B5A3B 0%, #6B451F 100%);
-    border-color: #8B6A4B;
-    border-bottom-color: #3B1A0A;
-    border-right-color: #3B1A0A;
-    transform: translateY(-5px);
-    box-shadow: 0 5px 0 #2B1A0A,
-                0 10px 15px rgba(0,0,0,0.4);
-    border-top: 4px solid #9B7A5B;
-    border-left: 4px solid #9B7A5B;
-    border-bottom: 4px solid #3B1A0A;
-    border-right: 4px solid #3B1A0A;
-}
-
-.god-table tr:hover th {
-    background: linear-gradient(135deg, #8B6A4B 0%, #7B5A3B 100%);
-    border-top: 4px solid #A07A5B;
-    border-left: 4px solid #A07A5B;
-    border-bottom: 4px solid #4B2A0A;
-    border-right: 4px solid #4B2A0A;
-}
-
-/* 8. 评价列样式（绿色边框提示） */
+/* 评价列样式（绿色边框提示） */
 .comment-cell {
-    border-left: 4px solid #228B22; /* 绿色边框 */
+    border-left: 3px solid #00FF00;
     font-style: italic;
-    color: #C0C0C0; /* 浅灰色文字 */
+    color: #E0E0E0;
 }
 
-/* 9. 详情行样式 */
+/* 行悬浮效果（轻微抬起） */
+.god-table tr:hover td {
+    background-color: #2A2A2A;
+    border-color: #444444;
+    transform: translateY(-2px);
+}
+
+/* 详情行样式 */
 .detail-row td {
-    background: linear-gradient(135deg, #705030 0%, #604020 100%) !important;
+    background-color: #282828 !important;
     border-top: none !important;
-    border-left-color: #806040 !important;
-    border-right-color: #806040 !important;
-}
-
-/* 10. 响应式调整（手机端适配） */
-@media (max-width: 992px) {
-    .mc-title { font-size: 2.2rem; }
-    .god-table th { padding: 1rem; font-size: 1.1rem; }
-    .god-table td { padding: 1.2rem; font-size: 1rem; }
-    .rank-cell { font-size: 1.7rem; }
 }
