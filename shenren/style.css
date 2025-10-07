@@ -7,43 +7,50 @@
     letter-spacing: 1px;
 }
 
-/* 2. 页面背景（Minecraft 草方块纹理） */
+/* 2. 页面背景（浅灰色纯色背景） */
 body {
-    background-image: url('https://picsum.photos/id/110/200/200');
-    background-size: 64px 64px;
+    background-color: #6cfff8;
     background-attachment: fixed;
     padding: 0;
     min-height: 100vh;
     overflow: hidden;
 }
 
-/* 3. 主体容器（Minecraft 深色界面） */
+/* 3. 主体容器（Minecraft 深色界面 - 增强立体感） */
 .container {
     width: 800px;
     margin: 50px auto;
-    background-color: #1A1A1A;
-    border: 6px solid #2B2B2B;
-    border-bottom-color: #0A0A0A;
-    border-right-color: #0A0A0A;
-    border-top-color: #3B3B3B;
-    border-left-color: #3B3B3B;
+    background-color: #0D0D0D;
+    border: 8px solid #006400;
+    border-bottom-color: #002200;
+    border-right-color: #002200;
+    border-top-color: #00CC00;
+    border-left-color: #00CC00;
     padding: 20px;
-    box-shadow: 8px 8px 0 #0A0A0A, 
-                16px 16px 0 rgba(0,0,0,0.3);
+    box-shadow: 
+        4px 4px 0 #003300,  /* 内阴影 - 右上 */
+        -4px -4px 0 #008000, /* 内阴影 - 左下 */
+        8px 8px 0 #050505,   /* 外阴影1 */
+        16px 16px 0 rgba(3, 3, 3, 0.5); /* 外阴影2 */
+    position: relative;
+    background-image: 
+        linear-gradient(45deg, rgba(10, 63, 0, 0.795) 100%, transparent 100%),
+        linear-gradient(-45deg, rgba(0, 63, 5, 0.815) 100%, transparent 200%);
+    background-size: 10px 10px;
 }
 
 /* 4. 标题样式（绿色高亮） */
 .mc-title {
     text-align: center;
-    color: #00FF00;
+    color: #e5ff00;
     text-shadow: 2px 2px 0 #000;
     margin-bottom: 20px;
     font-size: 2rem;
 }
 
 .mc-title::before, .mc-title::after {
-    content: "[]";
-    color: #00FF00;
+    content: "[👍]";
+    color: #0099ff;
     margin: 0 10px;
     font-size: 1.5rem;
 }
@@ -57,36 +64,36 @@ body {
 
 /* 表头（深灰色+绿色文字） */
 .god-table th {
-    background-color: #333333;
-    border: 2px solid #444444;
-    border-bottom-color: #222222;
-    border-right-color: #222222;
-    border-top-color: #555555;
-    border-left-color: #555555;
+    background-color: #8B4513;
+    border: 2px solid #A0522D;
+    border-bottom-color: #6B3410;
+    border-right-color: #6B3410;
+    border-top-color: #A0522D;
+    border-left-color: #A0522D;
     padding: 10px;
     text-align: left;
-    color: #00FF00;
+    color: #e5ff00;
     font-size: 1rem;
     text-shadow: 1px 1px 0 #000;
 }
 
-/* 排名列特殊样式（红色数字+绿色背景） */
+/* 排名列特殊样式（红色数字+棕色背景） */
 .rank-cell {
     text-align: center;
     font-size: 1.2rem;
     color: #FF0000;
     font-weight: bold;
-    background-color: #003300;
+    background-color: #6B3410;
 }
 
-/* 表格内容（深灰色+浅灰色文字） */
+/* 表格内容（棕色+浅灰色文字） */
 .god-table td {
-    background-color: #222222;
-    border: 2px solid #333333;
-    border-bottom-color: #111111;
-    border-right-color: #111111;
-    border-top-color: #444444;
-    border-left-color: #444444;
+    background-color: #A0522D;
+    border: 2px solid #8B4513;
+    border-bottom-color: #6B3410;
+    border-right-color: #6B3410;
+    border-top-color: #C17A4E;
+    border-left-color: #C17A4E;
     padding: 10px;
     font-size: 0.9rem;
     text-shadow: 1px 1px 0 #000;
@@ -101,13 +108,14 @@ body {
 
 /* 行悬浮效果（轻微抬起） */
 .god-table tr:hover td {
-    background-color: #2A2A2A;
-    border-color: #444444;
+    background-color: #C17A4E;
+    border-color: #A0522D;
     transform: translateY(-2px);
+    transition: all 0.3s ease;
 }
 
 /* 详情行样式 */
 .detail-row td {
-    background-color: #282828 !important;
+    background-color: #8B4513 !important;
     border-top: none !important;
 }

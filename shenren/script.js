@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             detailCell.style.padding = '1rem';
             detailCell.style.color = '#D0D0D0';
             detailCell.style.fontSize = '1rem';
-            detailCell.innerHTML = `<span style="color:#00FF00">[详情]</span> ${detailContent}`;
+            detailCell.innerHTML = `<span style="color:#00FF00">[评价]</span> ${detailContent}`;
             detailRow.appendChild(detailCell);
             row.after(detailRow);
         });
