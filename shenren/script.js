@@ -67,6 +67,3 @@ function getPlayerDetail(name) {
     };
     return details[name] || '暂无该玩家详细信息，可联系管理员补充';
 }
-
-
-
