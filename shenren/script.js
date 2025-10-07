@@ -62,6 +62,9 @@ function getPlayerDetail(name) {
     const details = {
         '_Chinese_Player_': '传奇赤石王，不仅自己赤石还要带着服务端和玩家一起赤石👍',
         'kdjnb': '记性天下无敌，迟早忘关刷沙机然后服务器爆炸👍',
+        'kdjnb（第二次）': '电脑配置挺好，但你有没有想过服务端配置不行 :('
+        'win10_2009': '为了上榜啥都干得出来'
     };
     return details[name] || '暂无该玩家详细信息，可联系管理员补充';
 }
+
